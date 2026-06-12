@@ -9,10 +9,14 @@ exposes — the **load-sharing error** that motivates the robust-droop scheme of
 
 | File | Purpose |
 |------|---------|
-| `conv_droop_2Rinv.slx` | The model: power circuit + two droop controllers `Ctrl1`, `Ctrl2` |
-| `run_conv.m` | Simulate (no rebuild) and pop up the 4-panel result figure |
+| `conv_droop_2Rinv.slx` | **Original model**: power circuit + two conventional-droop controllers `Ctrl1`, `Ctrl2` (product + LPF power calc) |
+| `conv_droop_2Rinv_noripple.slx` | **No-ripple variant**: same circuit, power computed by the quadrature (αβ) method so the 100 Hz ripple cancels — see §5 |
+| `run_conv.m` | Simulate the original model (no rebuild) and pop up the 4-panel result figure |
+| `build_noripple.m` | Build `…_noripple.slx` from the original by editing the two controllers (original file untouched) |
+| `compare_ripple.m` | Run both models and plot the ripple comparison |
 | `circuit.svg` | Power-circuit schematic (shown below) |
-| `conv_run_results.png` | Last simulation output |
+| `conv_run_results.png` | Original-model result |
+| `noripple_compare.png` | Original vs no-ripple comparison (see §5) |
 
 ---
 
@@ -235,6 +239,83 @@ At steady state `Ė_i = 0`, so `K_e·(E* − Vo) = n_i·P_i`. The left side uses
 *exactly*, **independent of the `Ro` drops**. That restores `P1/P2 → 2.00` and pulls
 `Vo` back toward `E*`. Building that version on the same circuit is the natural next
 step.
+
+---
+
+## 5. The `no_ripple` version — quadrature (αβ) power, ripple = 0
+
+The original model filters the 100 Hz (2ω) ripple out of `P` and `Q` with low-pass
+filters. As §3 explains, an LPF can only *attenuate* that ripple — it never reaches
+exactly zero, and pushing it lower costs response speed. The file
+`conv_droop_2Rinv_noripple.slx` removes the ripple **at the source** by changing the
+*algorithm*, not by tuning a filter.
+
+### Method — quadrature (αβ) power
+
+Build a 90°-shifted (quadrature) copy of **both** the voltage and the current, then
+compute power in the αβ frame:
+
+```
+   v_a = vo ,   v_b = vo delayed by T/4   (= delay90,   already in the model)
+   i_a = i  ,   i_b = i  delayed by T/4   (= delay90_i, newly added)
+
+   P = ½ ( v_a·i_a + v_b·i_b )
+   Q = ½ ( v_b·i_a − v_a·i_b )
+```
+
+For a sinusoid the two 2ω terms cancel exactly, so `P` and `Q` come out as pure DC —
+no low-pass needed. (Proof for P: the in-phase product carries `VI[cosφ − cos(2ωt−φ)]`
+and the quadrature product carries `VI[cosφ + cos(2ωt−φ)]`; their sum is `2·VI·cosφ`,
+a constant.)
+
+### Two design details that matter
+
+- **Q path: pure quadrature, no filter.** Reactive power feeds `ω → ∫ → θ`, and that
+  integrator (`int_theta`) is a state, so the Q loop is already broken. `LPF_Q` is
+  **deleted** entirely.
+- **P path: keeps a *high-bandwidth* `LPF_P` (ωc = 300, τ ≈ 3 ms) as a loop-breaker.**
+  Active power feeds `E = E* − n·P`, which is purely **algebraic** (the defining feature
+  of conventional droop — no integrator on E). Because the resistive `Ro` also makes the
+  bus voltage an algebraic function of `vref`, the path `vo → P → E → vref → vo` would
+  form an **algebraic loop**. One state breaks it. This `LPF_P` is **not** removing
+  ripple (the quadrature cancellation already did — ωc=300 attenuates 100 Hz by only
+  ~0.43, nowhere near enough); it is a loop-breaker / band-limiter, so it can be fast.
+
+This asymmetry mirrors the physics: `E = E*−nP` is algebraic → needs a state; `ω = ω*+mQ`
+is followed by an integrator → already has one.
+
+### Result (steady window t ∈ [6, 8] s)
+
+| | `P₁` ripple (pk-pk) | `Q₁` ripple (pk-pk) | `P₁/P₂` |
+|---|---|---|---|
+| Original (LPF) | 0.092 W | 0.554 var | 1.783 |
+| **No-ripple (quadrature)** | **0.0000 W** | **0.0000 var** | **1.783** |
+
+![Original vs no-ripple](noripple_compare.png)
+
+The ripple band collapses to a flat line, **and** the steady-state load sharing is
+untouched (`P₁/P₂ = 1.78` — the conventional-droop error of §4 is unchanged, because the
+quadrature method changes how `P, Q` are *measured*, not the droop physics). Bonus: with
+no heavy low-pass in the P path, `P₁` reaches its value almost instantly after the t = 3 s
+connection instead of the slow τ = 0.2 s climb of the original (middle panel above).
+
+### Honest caveats
+
+- The T/4 delay is an exact 90° shift only at 50 Hz. Here the steady frequency stays
+  essentially at `ω*` (Q ≈ 0), so the shift is essentially exact and the residual is
+  negligible.
+- At the connection instant the delay blocks carry ~5 ms of stale history, so `P, Q`
+  show a brief spike (visible at t = 3 s) before settling to zero ripple.
+- "Exactly zero" holds for this **average-value** model (no PWM). A switching model would
+  still show high-frequency content from the converter itself.
+
+### Rebuild / run it
+
+```matlab
+cd ~/Documents/UniversalDroopControl/ConventionalDroop
+build_noripple     % regenerate …_noripple.slx from the original (original untouched)
+compare_ripple     % run both models, print ripple metrics, save noripple_compare.png
+```
 
 ---
 
