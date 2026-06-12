@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# MATLAB / Simulink
+*.asv
+*.m~
+*.autosave
+slprj/
+codegen/
+*.slxc

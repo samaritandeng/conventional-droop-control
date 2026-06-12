@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="380" viewBox="0 0 780 380" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#1b5e9c"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="780" height="380" fill="#ffffff"/>
+  <text x="390" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#222">
+    Conventional Droop — Two R-inverters in Parallel (Fig. 19.5)
+  </text>
+
+  <!-- ===== Neutral / common return rail ===== -->
+  <line x1="60" y1="90" x2="60" y2="345" stroke="#444" stroke-width="2"/>
+  <line x1="60" y1="345" x2="660" y2="345" stroke="#444" stroke-width="2"/>
+  <!-- ground symbol -->
+  <line x1="60" y1="345" x2="60" y2="356" stroke="#444" stroke-width="2"/>
+  <line x1="48" y1="356" x2="72" y2="356" stroke="#444" stroke-width="2"/>
+  <line x1="52" y1="361" x2="68" y2="361" stroke="#444" stroke-width="2"/>
+  <line x1="56" y1="366" x2="64" y2="366" stroke="#444" stroke-width="2"/>
+
+  <!-- ============ INVERTER 1 (top) ============ -->
+  <circle cx="95" cy="100" r="26" fill="#fff" stroke="#222" stroke-width="2"/>
+  <path d="M80,100 c5,-12 10,-12 15,0 s10,12 15,0" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="95" y="150" text-anchor="middle" font-size="12" fill="#222">vr1</text>
+  <text x="95" y="166" text-anchor="middle" font-size="12" fill="#222">E₁∠δ₁</text>
+  <!-- left terminal to neutral rail -->
+  <line x1="69" y1="100" x2="60" y2="100" stroke="#222" stroke-width="2"/>
+  <!-- right terminal to Ro1 -->
+  <line x1="121" y1="100" x2="175" y2="100" stroke="#222" stroke-width="2"/>
+  <!-- Ro1 -->
+  <rect x="175" y="85" width="70" height="30" fill="#fff" stroke="#222" stroke-width="2"/>
+  <text x="210" y="78" text-anchor="middle" font-size="12" fill="#222">Ro₁ = 1 Ω</text>
+  <text x="210" y="104" text-anchor="middle" font-size="11" fill="#666">(R-inverter)</text>
+  <!-- I1 arrow -->
+  <line x1="245" y1="100" x2="300" y2="100" stroke="#1b5e9c" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="272" y="92" text-anchor="middle" font-size="12" fill="#1b5e9c">I₁</text>
+  <!-- Breaker (open switch) -->
+  <circle cx="305" cy="100" r="3" fill="#222"/>
+  <line x1="305" y1="100" x2="350" y2="84" stroke="#c0392b" stroke-width="2"/>
+  <circle cx="355" cy="100" r="3" fill="#222"/>
+  <line x1="355" y1="100" x2="410" y2="100" stroke="#222" stroke-width="2"/>
+  <text x="345" y="64" text-anchor="middle" font-size="11" fill="#c0392b">Breaker</text>
+  <text x="345" y="78" text-anchor="middle" font-size="11" fill="#c0392b">closes @ t = 3 s</text>
+  <!-- to bus -->
+  <line x1="410" y1="100" x2="560" y2="100" stroke="#222" stroke-width="2"/>
+
+  <!-- ============ INVERTER 2 (bottom) ============ -->
+  <circle cx="95" cy="250" r="26" fill="#fff" stroke="#222" stroke-width="2"/>
+  <path d="M80,250 c5,-12 10,-12 15,0 s10,12 15,0" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="95" y="300" text-anchor="middle" font-size="12" fill="#222">vr2</text>
+  <text x="95" y="316" text-anchor="middle" font-size="12" fill="#222">E₂∠δ₂</text>
+  <line x1="69" y1="250" x2="60" y2="250" stroke="#222" stroke-width="2"/>
+  <line x1="121" y1="250" x2="175" y2="250" stroke="#222" stroke-width="2"/>
+  <!-- Ro2 -->
+  <rect x="175" y="235" width="70" height="30" fill="#fff" stroke="#222" stroke-width="2"/>
+  <text x="210" y="228" text-anchor="middle" font-size="12" fill="#222">Ro₂ = 1 Ω</text>
+  <text x="210" y="254" text-anchor="middle" font-size="11" fill="#666">(R-inverter)</text>
+  <line x1="245" y1="250" x2="300" y2="250" stroke="#1b5e9c" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="272" y="242" text-anchor="middle" font-size="12" fill="#1b5e9c">I₂</text>
+  <!-- inverter 2 always connected, straight to bus -->
+  <line x1="300" y1="250" x2="560" y2="250" stroke="#222" stroke-width="2"/>
+
+  <!-- ============ COMMON AC BUS ============ -->
+  <line x1="560" y1="100" x2="560" y2="250" stroke="#222" stroke-width="3"/>
+  <circle cx="560" cy="100" r="3.5" fill="#222"/>
+  <circle cx="560" cy="250" r="3.5" fill="#222"/>
+  <circle cx="560" cy="175" r="3.5" fill="#222"/>
+  <text x="548" y="180" text-anchor="end" font-size="13" font-weight="bold" fill="#222">v_o</text>
+  <text x="548" y="196" text-anchor="end" font-size="11" fill="#666">(bus, Vmeas)</text>
+
+  <!-- ============ LOAD ============ -->
+  <line x1="560" y1="175" x2="650" y2="175" stroke="#222" stroke-width="2"/>
+  <rect x="635" y="175" width="30" height="70" fill="#fff" stroke="#222" stroke-width="2"/>
+  <text x="710" y="214" text-anchor="middle" font-size="12" fill="#222">Load = 9 Ω</text>
+  <line x1="650" y1="245" x2="650" y2="345" stroke="#222" stroke-width="2"/>
+</svg>
