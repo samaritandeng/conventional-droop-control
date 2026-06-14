@@ -1,6 +1,8 @@
 function compare_ripple()
 % Run the original (LPF) and the no-ripple (quadrature) models and compare.
 m1='conv_droop_2Rinv'; m2='conv_droop_2Rinv_noripple';
+here=fileparts(mfilename('fullpath')); oldc=cd(here); rcd=onCleanup(@()cd(oldc));
+addpath(fullfile(here,'..','original'));   % locate the original conv_droop_2Rinv
 o1=simrun(m1); o2=simrun(m2);
 w=[6 8];                                   % steady window, both inverters on
 fprintf('--- steady window t=[6,8] s ---\n');

@@ -7,16 +7,25 @@ Integration*, §19.3–19.6 (Fig. 19.5–19.6). Two single-phase inverters with
 **no communication** between them. The model reproduces — and deliberately
 exposes — the **load-sharing error** that motivates the robust-droop scheme of §19.6.
 
-| File | Purpose |
-|------|---------|
-| `conv_droop_2Rinv.slx` | **Original model**: power circuit + two conventional-droop controllers `Ctrl1`, `Ctrl2` (product + LPF power calc) |
-| `conv_droop_2Rinv_noripple.slx` | **No-ripple variant**: same circuit, power computed by the quadrature (αβ) method so the 100 Hz ripple cancels — see §5 |
-| `run_conv.m` | Simulate the original model (no rebuild) and pop up the 4-panel result figure |
-| `build_noripple.m` | Build `…_noripple.slx` from the original by editing the two controllers (original file untouched) |
-| `compare_ripple.m` | Run both models and plot the ripple comparison |
-| `circuit.svg` | Power-circuit schematic (shown below) |
-| `conv_run_results.png` | Original-model result |
-| `noripple_compare.png` | Original vs no-ripple comparison (see §5) |
+This repo holds **two versions of the same circuit**, in two folders:
+
+```
+original/    — version 1: power computed by product + low-pass filter
+  ├── conv_droop_2Rinv.slx       the model (power circuit + Ctrl1/Ctrl2)
+  ├── run_conv.m                 simulate it → 4-panel figure
+  └── conv_run_results.png       result figure
+no_ripple/   — version 2: quadrature (αβ) power, 100 Hz ripple cancels (§5)
+  ├── conv_droop_2Rinv_noripple.slx   the no-ripple model
+  ├── build_noripple.m           rebuild it from the original (original untouched)
+  ├── compare_ripple.m           run BOTH versions, plot the comparison
+  ├── metrics_noripple.m         extract steady-state metrics for the sim log
+  └── noripple_compare.png       original-vs-no-ripple figure
+circuit.svg                      shared power-circuit schematic (below)
+README.md                        this file
+```
+
+> The `no_ripple/` scripts auto-`addpath` `../original`, so they locate the original
+> model themselves — just `cd` into a folder and run.
 
 ---
 
@@ -291,7 +300,7 @@ is followed by an integrator → already has one.
 | Original (LPF) | 0.092 W | 0.554 var | 1.783 |
 | **No-ripple (quadrature)** | **0.0000 W** | **0.0000 var** | **1.783** |
 
-![Original vs no-ripple](noripple_compare.png)
+![Original vs no-ripple](no_ripple/noripple_compare.png)
 
 The ripple band collapses to a flat line, **and** the steady-state load sharing is
 untouched (`P₁/P₂ = 1.78` — the conventional-droop error of §4 is unchanged, because the
@@ -312,7 +321,7 @@ connection instead of the slow τ = 0.2 s climb of the original (middle panel ab
 ### Rebuild / run it
 
 ```matlab
-cd ~/Documents/UniversalDroopControl/ConventionalDroop
+cd ~/Documents/UniversalDroopControl/ConventionalDroop/no_ripple
 build_noripple     % regenerate …_noripple.slx from the original (original untouched)
 compare_ripple     % run both models, print ripple metrics, save noripple_compare.png
 ```
@@ -322,7 +331,7 @@ compare_ripple     % run both models, print ripple metrics, save noripple_compar
 ## How to run
 
 ```matlab
-cd ~/Documents/UniversalDroopControl/ConventionalDroop
+cd ~/Documents/UniversalDroopControl/ConventionalDroop/original
 run_conv          % simulates 8 s and pops up conv_run_results.png
 ```
 

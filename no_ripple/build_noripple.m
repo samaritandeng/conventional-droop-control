@@ -11,6 +11,8 @@ function build_noripple()
 % ripple -- the quadrature cancellation does. Q path needs no filter: the
 % omega->theta integrator (int_theta) already breaks its loop.
 src='conv_droop_2Rinv'; dst='conv_droop_2Rinv_noripple';
+here=fileparts(mfilename('fullpath')); oldc=cd(here); rcd=onCleanup(@()cd(oldc));
+addpath(fullfile(here,'..','original'));   % locate the original conv_droop_2Rinv
 bdclose('all');
 if isfile([dst '.slx']), delete([dst '.slx']); end
 load_system(src);
@@ -29,7 +31,11 @@ assert(has('LPF_P'),'LPF_P should remain as loop-breaker');
 assert(strcmp(get_param([sub '/LPF_P'],'Denominator'),'[1 300]'),'LPF_P should be high-bandwidth');
 assert(has('gain_halfP')&&has('gain_halfQ')&&has('delay90_i')&&has('m_ab')&&has('m_bb'),'quadrature blocks missing');
 fprintf('OK: Q path pure-quadrature (no LPF); P path quadrature + high-bw LPF_P (loop breaker).\n');
-bdclose(dst);
+
+% ---- auto-plot: run both models and pop up / save the comparison figure ----
+fprintf('\n--- auto-plotting: orig vs no-ripple ---\n');
+compare_ripple();   % runs both models, prints ripple metrics, saves noripple_compare.png
+fprintf('Figure saved: noripple_compare.png\n');
 end
 
 function surgery(sub)

@@ -3,6 +3,7 @@ function run_conv(stopTime)
 % power / voltage set-point / reactive power on the full time axis, and the
 % output voltage zoomed to ~5 line cycles around the t=3 s connection.
 if nargin<1, stopTime=8; end
+here=fileparts(mfilename('fullpath')); oldc=cd(here); rcd=onCleanup(@()cd(oldc));
 mdl='conv_droop_2Rinv';
 if ~bdIsLoaded(mdl), load_system(mdl); end
 out = sim(mdl,'StopTime',num2str(stopTime));
