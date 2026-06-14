@@ -16,16 +16,17 @@ original/    — version 1: power computed by product + low-pass filter
   └── conv_run_results.png       result figure
 no_ripple/   — version 2: quadrature (αβ) power, 100 Hz ripple cancels (§5)
   ├── conv_droop_2Rinv_noripple.slx   the no-ripple model
-  ├── build_noripple.m           rebuild it from the original (original untouched)
+  ├── run_noripple.m             open in Simulink, simulate, pop up the data figure
   ├── compare_ripple.m           run BOTH versions, plot the comparison
   ├── metrics_noripple.m         extract steady-state metrics for the sim log
-  └── noripple_compare.png       original-vs-no-ripple figure
+  ├── noripple_compare.png       original-vs-no-ripple figure
+  └── noripple_run_results.png   run_noripple output figure
 circuit.svg                      shared power-circuit schematic (below)
 README.md                        this file
 ```
 
-> The `no_ripple/` scripts auto-`addpath` `../original`, so they locate the original
-> model themselves — just `cd` into a folder and run.
+> Just `cd` into a folder and run. `compare_ripple` reaches the original model via
+> `addpath ../original` on its own.
 
 ---
 
@@ -318,12 +319,12 @@ connection instead of the slow τ = 0.2 s climb of the original (middle panel ab
 - "Exactly zero" holds for this **average-value** model (no PWM). A switching model would
   still show high-frequency content from the converter itself.
 
-### Rebuild / run it
+### Run it
 
 ```matlab
 cd ~/Documents/UniversalDroopControl/ConventionalDroop/no_ripple
-build_noripple     % regenerate …_noripple.slx from the original (original untouched)
-compare_ripple     % run both models, print ripple metrics, save noripple_compare.png
+run_noripple       % open the model in Simulink, simulate, pop up the 4-panel figure
+compare_ripple     % (optional) run both versions, plot the original-vs-no-ripple comparison
 ```
 
 ---
